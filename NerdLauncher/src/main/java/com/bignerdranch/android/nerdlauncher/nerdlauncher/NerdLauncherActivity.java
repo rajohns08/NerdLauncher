@@ -13,7 +13,6 @@ public class NerdLauncherActivity extends ActionBarActivity {
         setContentView(R.layout.activity_nerd_launcher);
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         
