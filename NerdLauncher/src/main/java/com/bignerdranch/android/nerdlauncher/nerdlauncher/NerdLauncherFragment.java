@@ -1,6 +1,7 @@
 package com.bignerdranch.android.nerdlauncher.nerdlauncher;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
@@ -9,15 +10,13 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-/**
- * Created by rajohns on 2/28/14.
- */
 public class NerdLauncherFragment extends ListFragment {
     private static final String TAG = "NerdLauncherFragment";
 
@@ -28,7 +27,7 @@ public class NerdLauncherFragment extends ListFragment {
         Intent startupIntent = new Intent(Intent.ACTION_MAIN);
         startupIntent.addCategory(Intent.CATEGORY_LAUNCHER);
 
-        PackageManager pm = getActivity().getPackageManager();
+        final PackageManager pm = getActivity().getPackageManager();
         List<ResolveInfo> activities = pm.queryIntentActivities(startupIntent, 0);
 
         Log.i(TAG, "I've found " + activities.size() + " activities.");
@@ -36,7 +35,6 @@ public class NerdLauncherFragment extends ListFragment {
         Collections.sort(activities, new Comparator<ResolveInfo>() {
             @Override
             public int compare(ResolveInfo a, ResolveInfo b) {
-                PackageManager pm = getActivity().getPackageManager();
                 return String.CASE_INSENSITIVE_ORDER.compare(a.loadLabel(pm).toString(), b.loadLabel(pm).toString());
             }
         });
@@ -50,5 +48,21 @@ public class NerdLauncherFragment extends ListFragment {
                 return v;
             }
         };
+
+        setListAdapter(adapter);
+    }
+
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        ResolveInfo resolveInfo = (ResolveInfo)l.getAdapter().getItem(position);
+        ActivityInfo activityInfo = resolveInfo.activityInfo;
+
+        if (activityInfo == null) return;
+
+        Intent i = new Intent(Intent.ACTION_MAIN);
+        i.setClassName(activityInfo.applicationInfo.packageName, activityInfo.name);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        startActivity(i);
     }
 }
