@@ -10,15 +10,18 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 public class NerdLauncherFragment extends ListFragment {
     private static final String TAG = "NerdLauncherFragment";
+    private PackageManager pm;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -27,7 +30,7 @@ public class NerdLauncherFragment extends ListFragment {
         Intent startupIntent = new Intent(Intent.ACTION_MAIN);
         startupIntent.addCategory(Intent.CATEGORY_LAUNCHER);
 
-        final PackageManager pm = getActivity().getPackageManager();
+        pm = getActivity().getPackageManager();
         List<ResolveInfo> activities = pm.queryIntentActivities(startupIntent, 0);
 
         Log.i(TAG, "I've found " + activities.size() + " activities.");
@@ -39,17 +42,29 @@ public class NerdLauncherFragment extends ListFragment {
             }
         });
 
-        ArrayAdapter<ResolveInfo> adapter = new ArrayAdapter<ResolveInfo>(getActivity(), android.R.layout.simple_list_item_1, activities) {
-            public View getView(int pos, View convertView, ViewGroup parent) {
-                View v = super.getView(pos, convertView, parent);
-                TextView tv = (TextView)v;
-                ResolveInfo ri = getItem(pos);
-                tv.setText(ri.loadLabel(pm));
-                return v;
-            }
-        };
+        AppAdapter appAdapter = new AppAdapter(activities);
+        setListAdapter(appAdapter);
+    }
 
-        setListAdapter(adapter);
+    private class AppAdapter extends ArrayAdapter<ResolveInfo> {
+        public AppAdapter(List<ResolveInfo> apps) {
+            super(getActivity(), 0, apps);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = getActivity().getLayoutInflater().inflate(R.layout.list_item_application, null);
+            }
+
+            ResolveInfo ri = getItem(position);
+            ImageView imageView = (ImageView)convertView.findViewById(R.id.application_image);
+            imageView.setImageDrawable(ri.loadIcon(pm));
+            TextView textView = (TextView)convertView.findViewById(R.id.application_label);
+            textView.setText(ri.loadLabel(pm));
+
+            return convertView;
+        }
     }
 
     @Override
