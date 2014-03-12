@@ -45,7 +45,7 @@ public class NerdLauncherFragment extends ListFragment {
         AppAdapter appAdapter = new AppAdapter(activities);
         setListAdapter(appAdapter);
 
-//        TODO: ADD ACTIVITY THAT DISPLAYS ONLY THE RUNNING TASKS AND ALLOWS YOU TO SWAP BETWEEN THEM
+//        TODO: ADD ITEM TO ACTION BAR FOR CHANGING TO ANOTHER ACTIVITY
     }
 
     private class AppAdapter extends ArrayAdapter<ResolveInfo> {
