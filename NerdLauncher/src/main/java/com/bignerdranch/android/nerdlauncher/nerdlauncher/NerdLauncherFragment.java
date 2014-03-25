@@ -48,7 +48,7 @@ public class NerdLauncherFragment extends ListFragment {
         AppAdapter appAdapter = new AppAdapter(activities);
         setListAdapter(appAdapter);
 
-//        TODO: ADD ITEM TO ACTION BAR FOR CHANGING TO ANOTHER ACTIVITY. CHECK OUT PAGE 257 CREATING OPTIONS MENU
+//        TODO: EDIT MENU ITEM TEXT AND ICON AND MAKE CLICKING IT TAKE TO ANOTHER ACTIVITY
     }
 
     private class AppAdapter extends ArrayAdapter<ResolveInfo> {
